@@ -1,7 +1,9 @@
 from picamera import PiCamera
-import time
 import cv2
 import numpy as np
+import datetime
+import time
+import shutil
 
 tmp_img_path    = "img.jpg"
 tmp_video_base  = "beo_video"
@@ -48,7 +50,7 @@ def cat_faces_in_image(image_path: str):
 
 
 def beo_detected(image_path: str):
-    return len(cat_faces_in_image(image_path)) > 1
+    return len(cat_faces_in_image(image_path)) > 0
 
 def send_beo_to_followers():
     #TODO
@@ -57,7 +59,7 @@ def send_beo_to_followers():
 if __name__ == "__main__":
 
     camera = PiCamera()
-    camera.resolution = (1920, 1080)
+    camera.resolution = (1024, 720)
     camera.vflip        = True
     camera.image_effect = 'none' #to reset it in case it was changed before
 
@@ -71,11 +73,13 @@ if __name__ == "__main__":
 
         if beo_detected(tmp_img_path):
             print("béo detected")
-            video_path = tmp_video_base + str(time.time()) + ".h264"
+            now = datetime.datetime.now()
+            video_path = tmp_video_base + ' {0:%Y-%m-%d %H:%M:%S}'.format(now) + ".h264"
             camera.start_recording(video_path)
             camera.wait_recording(5)
             camera.stop_recording()
-
+            shutil.copy(tmp_img_path, "béo detected" + ' {0:%Y-%m-%d %H:%M:%S}'.format(now) + ".jpg") 
+            
             send_beo_to_followers()
 
         #img = cv2.imread(tmp_img_path)
