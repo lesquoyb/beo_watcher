@@ -45,7 +45,7 @@ def cat_faces_in_image(image_path: str):
     gray = cv2.cvtColor(img_to_test, cv2.COLOR_BGR2GRAY)
 
     # Detects faces of different sizes in the input image
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=10, minSize=(75, 75))
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=10, minSize=(100, 100))
     return faces
 
 
@@ -59,7 +59,7 @@ def send_beo_to_followers():
 if __name__ == "__main__":
 
     camera = PiCamera()
-    camera.resolution = (1024, 720)
+    camera.resolution = (1920, 1080)
     camera.vflip        = True
     camera.image_effect = 'none' #to reset it in case it was changed before
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
             now = datetime.datetime.now()
             video_path = tmp_video_base + ' {0:%Y-%m-%d %H:%M:%S}'.format(now) + ".h264"
             camera.start_recording(video_path)
-            camera.wait_recording(5)
+            camera.wait_recording(15)
             camera.stop_recording()
             shutil.copy(tmp_img_path, "béo detected" + ' {0:%Y-%m-%d %H:%M:%S}'.format(now) + ".jpg") 
             
