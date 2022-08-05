@@ -129,15 +129,15 @@ def camera_loop():
 			beo_detected = os.path.join(current_dir, "béo detected" + time_stamp)
 			cv2.imwrite(beo_detected + ".jpg", img_to_test)
 
-			#we add a cute hat over the cat's head because
-			(x,y,w,h) = faces_detected[np.argmax([w for (_,_, w,_) in faces_detected])]
-			hat_resized = cv2.resize(img_hat, (w, int(w * hat_ratio)))
-			overlay_image_alpha(img_to_test,
-								hat_resized[:, :3],
-								int(x - hat_resized.shape[1] * 0.05),
-								int(y - hat_resized.shape[0] * 0.90),
-								hat_resized[:, 3] / 255.0)
-			cv2.imwrite("béo with a hat detected" + time_stamp + ".jpg", img_to_test)
+			##we add a cute hat over the cat's head because
+			#(x,y,w,h) = faces_detected[np.argmax([w for (_,_, w,_) in faces_detected])]
+			#hat_resized = cv2.resize(img_hat, (w, int(w * hat_ratio)))
+			#overlay_image_alpha(img_to_test,
+			#					hat_resized[:, :3],
+			#					int(x - hat_resized.shape[1] * 0.05),
+			#					int(y - hat_resized.shape[0] * 0.90),
+			#					hat_resized[:, 3] / 255.0)
+			#cv2.imwrite("béo with a hat detected" + time_stamp + ".jpg", img_to_test)
 
 
 			asyncio.run(send_beo_to_followers(video_path))
