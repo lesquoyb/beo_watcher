@@ -21,7 +21,7 @@ current_update:     Update
 
 
 def log(mess: str):
-	time_stamp = '{0:%Y-%m-%d %H:%M:%S} -'.format(datetime.datetime.now())
+	time_stamp = '{0:%Y-%m-%d %H:%M:%S} - '.format(datetime.datetime.now())
 	print(time_stamp + mess)
 
 # ======== TELEGRAM HANDLING =========
@@ -59,6 +59,8 @@ async def tg_cmd_current_state(update: Update, context: ContextTypes.DEFAULT_TYP
 		await context.bot.send_photo(chat_id=update.effective_chat.id,  photo=img, write_timeout=100)
 	except IOError:
 		await context.bot.send_message(chat_id=update.effective_chat.id, text="No pictures taken yet")
+	except Exception as e:
+		await context.bot.send_message(chat_id=update.effective_chat.id, text="Unable to send the picture: " + str(e))
 
 
 async def send_beo_to_followers(video_path: str):
@@ -71,7 +73,7 @@ async def send_beo_to_followers(video_path: str):
 		cmd = "rm " + video_out
 		log(cmd)
 		os.system(cmd)
-		cmd = "ffmpeg -i " + video_path + " -vcodec libx265 -r 5 -preset ultrafast " + video_out
+		cmd = "ffmpeg -i " + video_path + " -vcodec libx265 -r 20 -preset ultrafast " + video_out
 		log(cmd)
 		os.system(cmd)
 		log("sending:", video_out)
@@ -82,7 +84,7 @@ async def send_beo_to_followers(video_path: str):
 											 write_timeout=180,
 											 caption="📸 the star is out 📸")
 	except Exception as e:
-		log(e)
+		log(str(e))
 		await current_context.bot.send_message(chat_id=current_update.effective_chat.id,
 											   text="Béo detected, but unable to open video file")
 
