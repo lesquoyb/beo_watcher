@@ -20,6 +20,9 @@ current_context:    ContextTypes.DEFAULT_TYPE
 current_update:     Update
 
 
+def log(mess: str):
+	time_stamp = '{0:%Y-%m-%d %H:%M:%S} -'.format(datetime.datetime.now())
+	print(time_stamp + mess)
 
 # ======== TELEGRAM HANDLING =========
 def init_telegram_bot():
@@ -30,13 +33,14 @@ def init_telegram_bot():
 
 	current_handler = CommandHandler('current_state', tg_cmd_current_state)
 	application.add_handler(current_handler)
-	print("bot initialized")
+	log("bot initialized")
 	application.run_polling()
 
 
 async def tg_cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	global current_context
 	global current_update
+	log("start")
 	current_context = context
 	current_update  = update
 	await context.bot.send_message(chat_id=update.effective_chat.id, text="Greatings new Béo's fan!")
@@ -45,7 +49,7 @@ async def tg_cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def tg_cmd_current_state(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	global current_context
 	global current_update
-	print("current_state")
+	log("current_state")
 	current_context = context
 	current_update  = update
 	try:
@@ -62,15 +66,15 @@ async def send_beo_to_followers(video_path: str):
 	global current_update
 
 	try:
-		print("compressing video")
+		log("compressing video")
 		video_out = os.path.join(current_dir, "out_vid.mp4")
 		cmd = "rm " + video_out
-		print(cmd)
+		log(cmd)
 		os.system(cmd)
 		cmd = "ffmpeg -i " + video_path + " -vcodec libx265 -r 5 -preset ultrafast " + video_out
-		print(cmd)
+		log(cmd)
 		os.system(cmd)
-		print("sending:", video_out)
+		log("sending:", video_out)
 		video = open(video_out, "rb")
 		await current_context.bot.send_video(chat_id=current_update.effective_chat.id,
 											 video=video,
@@ -78,7 +82,7 @@ async def send_beo_to_followers(video_path: str):
 											 write_timeout=180,
 											 caption="📸 the star is out 📸")
 	except Exception as e:
-		print(e)
+		log(e)
 		await current_context.bot.send_message(chat_id=current_update.effective_chat.id,
 											   text="Béo detected, but unable to open video file")
 
@@ -108,7 +112,7 @@ def camera_loop():
 
 		if len(faces_detected) > 0:
 
-			print("béo detected")
+			log("béo detected")
 
 			now = datetime.datetime.now()
 			time_stamp = ' {0:%Y-%m-%d %H:%M:%S}'.format(now)
@@ -119,7 +123,7 @@ def camera_loop():
 			camera.wait_recording(10)
 			camera.stop_recording()
 
-			print("finish recording")
+			log("finish recording")
 			#TODO: do this in a separated thread
 			# we copy it so we have the image that started the recording
 			beo_detected = os.path.join(current_dir, "béo detected" + time_stamp)
